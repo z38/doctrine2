@@ -26,6 +26,7 @@ use Doctrine\DBAL\Types\Type;
 use ReflectionClass;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\ClassLoader;
+use Doctrine\ORM\Proxy\Proxy;
 
 /**
  * A <tt>ClassMetadata</tt> instance holds all the object-relational mapping metadata
@@ -667,7 +668,11 @@ class ClassMetadataInfo implements ClassMetadata
             return $id;
         }
 
-        $value = $this->reflFields[$this->identifier[0]]->getValue($entity);
+        if ($entity instanceof Proxy) {
+            $value = $entity->__getIdentifierValue($this->identifier[0]);
+        } else {
+            $value = $this->reflFields[$this->identifier[0]]->getValue($entity);
+        }
 
         if ($value !== null) {
             return array($this->identifier[0] => $value);

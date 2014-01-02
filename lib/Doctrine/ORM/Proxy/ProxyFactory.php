@@ -383,6 +383,12 @@ class <proxyClassName> extends \<className> implements \Doctrine\ORM\Proxy\Proxy
         return $this->__isInitialized__;
     }
 
+    /** @private */
+    public function __getIdentifierValue($identifier)
+    {
+        return $this->_identifier[$identifier];
+    }
+
     <methods>
 
     public function __sleep()
