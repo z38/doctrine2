@@ -282,6 +282,24 @@ class DDC117Test extends \Doctrine\Tests\OrmFunctionalTestCase
     /**
      * @group DDC-117
      */
+    public function testPersistSingleFlush()
+    {
+        $this->article1 = new DDC117Article("Foo");
+        $this->article2 = new DDC117Article("Bar");
+        $this->reference = new DDC117Reference($this->article1, $this->article2, "Test-Description");
+        $this->_em->persist($this->article1);
+        $this->_em->persist($this->article2);
+        $this->_em->persist($this->reference);
+
+        $this->_em->flush();
+
+        $idCriteria = ['source' => $this->article1->id(), 'target' => $this->article2->id()];
+        self::assertSame($this->reference, $this->_em->find(DDC117Reference::class, $idCriteria));
+    }
+
+    /**
+     * @group DDC-117
+     */
     public function testReferencesToForeignKeyEntities()
     {
         $idCriteria = ['source' => $this->article1->id(), 'target' => $this->article2->id()];
